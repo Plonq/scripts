@@ -18,6 +18,7 @@
 #     - There seems to be a bug in the BulkPrint causing incorrect ordering of pages when there are two
 #       candidates with the same name next to each other. The script should handle this fine, since the resume
 #       always comes after the "Candidate Details" page.
+#     - All paths are relative to current working directory
 #
 # PyPDF2: See here for licencing: https://github.com/mstamy2/PyPDF2
 #
@@ -26,12 +27,16 @@
 from PyPDF2 import PdfFileWriter, PdfFileReader
 import re, csv, os, sys
 
-INPUT_PDFS = ['bulkprint_huge.pdf',]
+INPUT_PDFS = ['6mo_aus_1.pdf',
+              '6mo_aus_2.pdf',
+              '6mo_aus_3.pdf',
+              '6mo_aus_4.pdf',
+              '6mo_aus_5.pdf',]
 OUTPUT_DIR = 'output'
 
 # Any candidates with a title not in this list will be incorrectly parsed
 # and end up with a title as their first name
-TITLES = ['Mr', 'Mrs', 'Ms', 'Miss', 'Dr', 'Professor']
+TITLES = ['mr', 'mrs', 'ms', 'miss', 'dr', 'professor']
 
 
 # Check if all input pdfs exist
@@ -86,9 +91,9 @@ for input_pdf in INPUT_PDFS:
             details = page.extractText().split('\n')
             c_fullname = details[0].strip().split()
             print(" ".join(c_fullname))
-            if c_fullname[0] in TITLES:
+            if c_fullname[0].strip('.').lower() in TITLES:
                 # Title must exist
-                c_title = c_fullname[0]
+                c_title = c_fullname[0].strip('.')
                 c_firstname = c_fullname[1]
             else:
                 # No title
